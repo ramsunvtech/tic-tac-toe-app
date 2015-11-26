@@ -1,0 +1,27 @@
+<div id="leader-board">
+  <h2>Leader Board</h2>
+  <table class="result-table">
+   <thead>
+    <tr>
+       <th>#</th>
+       <th>Player Name</th>
+       <th>Points</th>
+    </tr>
+   </thead>
+   <tbody>
+    <% if( !_.isEmpty(score) ) { %>
+      <% _.each(score, function (result, key) { %>
+        <tr>
+           <td><%= key + 1%></td>
+           <td><%= result.playerName %></td>
+           <td><%= result.points %></td>
+        </tr>
+      <% }) %>
+    <% } else { %>
+        <tr>
+         <td colspan="4">There is no games played</td>
+        </tr>
+    <% } %>
+   </tbody>
+  </table>
+</div>
