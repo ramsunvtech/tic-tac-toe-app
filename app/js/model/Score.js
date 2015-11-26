@@ -1,6 +1,10 @@
+// Score Model: Store all Games Result and compute Leader Board.
+
 define([
-  'model/Base'
+  'model/shared/Base'
 ], function (BaseModel) {
+
+  'use strict';
 
   return BaseModel.extend({
 
@@ -10,6 +14,10 @@ define([
       result: []
     },
 
+    /**
+     *  Get all the Games Result which has replicated Item as per player wins.
+     *  Grouping by Player Name and Map it to sum the Points.
+     */
     getScoreList: function () {
       var result = this.get('result'),
           groups = _(result).groupBy('playerName');
@@ -27,6 +35,10 @@ define([
       return _.sortBy(scoreList, 'points').reverse();
     },
 
+
+    /**
+     *  Push the New Game Result to the Game Result History.
+     */
     setScore: function (details) {
       var scoreResult = this.get('result');
       scoreResult.push(details);
