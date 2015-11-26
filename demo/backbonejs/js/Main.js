@@ -8,7 +8,7 @@ require.config({
     underscore: "libs/underscore-min",
     backbone: "libs/backbone-min",
     text: "libs/requirejs/text",
-    templates: "../../templates"
+    templates: "../backbonjs/templates"
   },
 
   shim: {
