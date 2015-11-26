@@ -20,7 +20,7 @@ define([
      */
     getScoreList: function () {
       var result = this.get('result'),
-          groups = _(result).groupBy('playerName');
+          groups = _(result).groupBy('playerName'),
           scoreList = [];
 
       scoreList = _(groups).map( function (g, key) {
