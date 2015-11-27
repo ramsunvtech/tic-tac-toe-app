@@ -1,8 +1,12 @@
+// Leader Board
+
 define([
   'view/shared/Base',
   'model/Score',
   'text!templates/leader-board.html'
 ], function (BaseView, ScoreModel, leaderBoardTpl) {
+
+  'use strict';
 
   return BaseView.extend({
 

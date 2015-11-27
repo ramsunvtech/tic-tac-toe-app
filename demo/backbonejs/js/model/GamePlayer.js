@@ -1,9 +1,13 @@
+// Game Player: Store the Players Details.
+
 define([
-  'model/Base'
+  'model/shared/Base'
 ], function (BaseModel) {
 
-  return BaseModel.extend({
+  'use strict';
 
+  return BaseModel.extend({
+    
     localStorage: 'GamePlayer',
     
     defaults: {
