@@ -8,6 +8,8 @@ define([
 
   return BaseModel.extend({
 
+    localStorage: 'Game',
+
     defaults: {
       crossPlayerName: "",
       noughtPlayerName: "",

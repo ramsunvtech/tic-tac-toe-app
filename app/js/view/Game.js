@@ -1,9 +1,13 @@
+// Tic Tac Toe Game View
+
 define([
   'view/shared/Base',
   'model/Score',
-  'model/Game',
+  'model/GamePlayer',
   'text!templates/game.html'
-], function (BaseView, ScoreModel, GameModel, gameTpl) {
+], function (BaseView, ScoreModel, PlayerModel, gameTpl) {
+
+  'use strict';
 
   return BaseView.extend({
 
@@ -11,75 +15,77 @@ define([
 
     scoreModel: new ScoreModel(),
 
-    model: new GameModel(),
+    model: new PlayerModel(),
 
     events: {
       'click .cell.empty': 'tick',
       'click #back': 'goBack'
     },
 
-    crossPlayerId: 'player1',
-    noughtPlayerId: 'player2',
-    currentPlayer: 1,
-    currentPlayerClass: '',
-    cellClassList: '',
-    playerClass: ['player cross-player', 'player nought-player'],
-    playerAttribute: ['crossPlayerName', 'noughtPlayerName'],
+    // View Properties.
+      // Player Class Name and their Id.
+      crossPlayerId: 'player1',
+      noughtPlayerId: 'player2',
+      currentPlayer: 1,
+      currentPlayerClass: '',
+      cellClassList: '',
+      playerClass: ['player cross-player', 'player nought-player'],
+      playerAttribute: ['crossPlayerName', 'noughtPlayerName'],
 
-    // Game Result
-    isCrossWin: false,
-    isNoughtWin: false,
-    isDraw: false,
+      // Minimum and Maximum Clicks to do Combination Check.
+      minimumClicks: 4,
+      maximumClicks: 9,
+
+      // Game Result
+      isCrossWin: false,
+      isNoughtWin: false,
+      isDraw: false,
     
-    // Messages
-    gameResult: '',
-    winner: '',
+      // Message Properties.
+      gameResult: '',
+      winner: '',
 
-    winCombinations: [
-      // Horizontal
-      [1, 2, 3],
-      [4, 5, 6],
-      [7, 8, 9],
+      // Winning Positions for 3X3.
+      // We can use formulae to generate this multi dimensional array as well.
+      winCombinations: [
+        // Horizontal
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
 
-      // Vertical
-      [1, 4, 7],
-      [2, 5, 8],
-      [3, 6, 9],
+        // Vertical
+        [1, 4, 7],
+        [2, 5, 8],
+        [3, 6, 9],
 
-      // Diagonal Win
-      [3, 5, 7],
-      [1, 5, 9]
-    ],
+        // Diagonal Win
+        [3, 5, 7],
+        [1, 5, 9]
+      ],
 
+    // Go back to Home.
     goBack: function () {
       window.location = 'index.html';
     },
 
-    getPlayerDetails: function () {
-      var gamePlayers = JSON.parse( localStorage.getItem('GamePlayer') || '{}' );
-
-      return {
-        "crossPlayerName": gamePlayers.crossPlayerName || '',
-        "noughtPlayerName": gamePlayers.noughtPlayerName || '',
-      };
-    },
-
-    setPlayerDetails: function () {
-      this.model.set( this.getPlayerDetails() );
-    },
-
+    /**
+     *  Game View Initializing ...
+     *  Empty the Header and Summary Block.
+     */
     initialize: function () {
       $('header, summary').html('');
 
       this.currentPlayerClass = this.crossPlayerId;
       this.cellClassList = 'column selected ' + this.crossPlayerId;
-      this.setPlayerDetails();
+      this.model.initialize();
     },
 
+    // Check to start check Winning Combination.
     canCheckForResult: function () {
-      return (this.$('input.cell:checked').length > 4);
+      return ( this.$('input.cell:checked').length > this.minimumClicks );
     },
 
+    // Get the clicked positions by Player Wise.
     getPositions: function (playerCellClass) {
       var positions = $('input.cell:checked.' + playerCellClass).map(function () {
         return parseInt(this.value);
@@ -87,19 +93,23 @@ define([
       return positions;
     },
 
+    // Get the Cross Player's clicked positions.
     getCrossPositions: function () {
       return this.getPositions(this.crossPlayerId);
     },
 
+    // Get the Nought Player's clicked positions.
     getNoughtPositions: function () {
       return this.getPositions(this.noughtPlayerId);
     },
 
+    // Check whether the Game is over.
     isGameOver: function () {
-      return (this.$('input.cell:checked').length == 9);
+      return ( this.$('input.cell:checked').length == this.maximumClicks );
     },
 
-    showResult: function () {
+    // Show the Message for the Game Result.
+    showMessage: function () {
       var message = (this.winner) ? 'Congratultion ' + this.winner + '! \n You Won' 
           : this.gameResult + this.winner;
       alert(message);
@@ -107,6 +117,13 @@ define([
       this.goBack();
     },
 
+    /**
+     *  Iterate every winning Combination to end the Game.
+     *  If Cross / Nought Player has won then store it to the Game Result History.
+     *  If Match is drawan, don't add it in the Game Result History.
+     *  Show the Message for Game Result.
+     *  Redirect to Home.
+     */
     iterateCombinations: function () {
       var _this = this,
           result = 'Won By ',
@@ -164,21 +181,13 @@ define([
       if(isGameEnded) {
         this.gameResult = result;
         this.winner = player;
-        this.showResult();
+        this.showMessage();
         this.scoreModel.saveItem();
       }
 
     },
 
-    getResult: function () {
-      return {
-        "crossPlayerName": "",
-        "noughtPlayerName": "",
-        "won": "",
-        "result": ""
-      }
-    },
-
+    // Find who is Next Player and update in the Interface to player to aware of it.
     setNextPlayer: function () {
       this.currentPlayer = (this.currentPlayer == 1) ? 2 : 1;
       this.currentPlayerClass = 'player' + this.currentPlayer;
@@ -193,6 +202,7 @@ define([
       this.$('div.status span.player').removeClass().addClass(iconClass);
     },
 
+    // Trigger on every click of Cell. 
     tick: function (e) {
       var $cell = $(e.target),
           $label = $cell.parent();
@@ -208,6 +218,7 @@ define([
       }
     },
 
+    // Setting Initial Game Notes for Players to understand.
     setGameDetails: function () {
       var crossPlayerName = this.model.get('crossPlayerName');
 
@@ -216,6 +227,7 @@ define([
       this.$('div.status span.name').text(crossPlayerName);
     },
 
+    // Trigger on Render View.
     render: function () {
       this.$el.html(gameTpl);
       this.setGameDetails();

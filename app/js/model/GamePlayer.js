@@ -7,7 +7,7 @@ define([
   'use strict';
 
   return BaseModel.extend({
-
+    
     localStorage: 'GamePlayer',
     
     defaults: {
