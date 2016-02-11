@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <title>Game - Tic Tac Toe</title>
+
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+
+      <link href="css/font-awesome.min.css" rel="stylesheet" />
+      <link href="css/game.css" rel="stylesheet" />
+      <script type="text/javascript" src="js/lib/jquery-2.2.0.js"></script>
+      <script type="text/javascript" src="js/lib/angular.1.4.8.js"></script>
+    </head>
+    <body ng-app="tic-tac-toe-app">
+      <header></header>
+      <main ng-controller="boardController">
+        <div class="player-form" ng-if="gameStarted == false">
+          <label>Player 1: <input type="text" name="player1" ng-model="playerNames.x" /></label>
+          <label>Player 2:<input type="text" name="player2" ng-model="playerNames.o" /></label>
+          <!--<label>Board Size: <input type="text" name="board-size" ng-model="boardSize" /></label>-->
+
+
+          <div class="field-row">
+            <input type="button" class="btn" id="clear" value="Clear History">
+            <input type="button" class="btn" id="start" ng-click="setStatus(true)" value="Start Game">
+          </div>
+        </div>
+        <div class="game-board" ng-if="gameStarted == true">
+          <div class="guide-lines">
+            <div class="cross details">
+              <span class="player cross-player"></span>
+              <span class="type"> - Player 1: </span>
+              <span class="name">{{playerNames.x}}</span>
+            </div>
+
+            <div class="nought details">
+              <span class="player nought-player"></span>
+              <span class="type"> - Player 2: </span>
+              <span class="name">{{playerNames.o}}</span>
+            </div>
+
+            <div class="status details">
+              <span class="type">Turn for </span>
+              <span class="name">{{nextPlayerName}}</span>
+              <span class="player cross-player"></span>
+            </div>
+
+            <div class="result details">
+              <span class="type">Game Started </span>
+              <span class="name"></span>
+              <span class=""></span>
+            </div>
+          </div>
+
+          <form id="tic-tac-toe-game">
+            <div class="table">
+              <div class="row" ng-init="current = $parent.start; $parent.start=$parent.start+boardSize;" ng-repeat="row in createList(boardSize) track by $index">
+                <label class="column empty" ng-repeat="cols in createList(boardSize) track by $index">
+                  <input type="checkbox" ng-init="boxValue = current + $index + 1" ng-click="tick(boxValue)" class="cell empty" id="cell-{{boxValue}}" value="{{boxValue}}">
+                </label>
+              </div>
+            </div>
+          </form>
+
+          <div class="field-row">
+            <input type="button" class="btn" id="back" value="Go Back" ng-click="setStatus(false)">
+          </div>
+        </div>
+      </main>
+      <summary></summary>
+    </body>
+    <script type="text/javascript" src="js/tic-tac-toe.js"></script>
+</html>
